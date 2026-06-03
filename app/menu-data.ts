@@ -1,4 +1,31 @@
-export const restaurant = {
+export type Restaurant = {
+  name: string
+  description: string
+  rating: string
+  deliveryTime: string
+  cuisine: string
+  hours: string
+  location: string
+}
+
+export type MenuItem = {
+  id: string
+  name: string
+  description: string
+  price: number
+  prepTime: number
+  spiceLevel: string
+  isVeg: boolean
+  isBestSeller: boolean
+}
+
+export type MenuSection = {
+  name: string
+  description: string
+  items: MenuItem[]
+}
+
+export const restaurant: Restaurant = {
   name: 'Spice Garden Kitchen',
   description:
     'A simple QR-style menu built for browsing dishes quickly across starters, mains, rice, desserts, and drinks.',
@@ -9,7 +36,7 @@ export const restaurant = {
   location: 'Hyderabad',
 }
 
-export const menuCategories = [
+export const menuCategories: MenuSection[] = [
   {
     name: 'Starters',
     description: 'Small plates and fast-moving favourites.',
