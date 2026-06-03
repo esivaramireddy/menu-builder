@@ -7,10 +7,19 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
 
 jobs:
   deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
 
     steps:
@@ -33,18 +42,11 @@ jobs:
         run: New-Item -ItemType File -Path dist/.nojekyll
         shell: pwsh
 
-      - name: Publish dist to gh-pages
-        shell: bash
-        run: |
-          set -euo pipefail
-          mkdir -p /tmp/gh-pages
-          cp -r dist/. /tmp/gh-pages/
-          cd /tmp/gh-pages
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: ./dist
 
-          git init
-          git checkout -b gh-pages
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add --all
-          git commit -m "Deploy GitHub Pages"
-          git push --force "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" gh-pages
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
